@@ -63,8 +63,8 @@ ui <- dashboardPage(skin = "black",
                                        ),
                                 column(8,
                                        div(checkboxGroupInput("chrono_data", "Period",
-                                                              choices = c("Week", "Month", "Year"),
-                                                              selected = c("Week", "Month", "Year")
+                                                              choices = c("Weekly", "Monthly", "Yearly"),
+                                                              selected = c("Weekly", "Monthly", "Yearly")
                                                               )
                                            )
                                        )
@@ -92,8 +92,8 @@ ui <- dashboardPage(skin = "black",
                                                   ),
                                                   column(8, 
                                                          div(checkboxGroupInput("chrono1_compare", "Period",
-                                                                                choices = c("Week", "Month", "Year"),
-                                                                                selected = c("Week", "Month", "Year")
+                                                                                choices = c("Weekly", "Monthly", "Yearly"),
+                                                                                selected = c("Weekly", "Monthly", "Yearly")
                                                          )
                                                          )
                                          )
@@ -113,8 +113,8 @@ ui <- dashboardPage(skin = "black",
                                          ),
                                          column(8, 
                                                 div(checkboxGroupInput("chrono2_compare", "Period",
-                                                                       choices = c("Week", "Month", "Year"),
-                                                                       selected = c("Week", "Month", "Year")
+                                                                       choices = c("Weekly", "Monthly", "Yearly"),
+                                                                       selected = c("Weekly", "Monthly", "Yearly")
                                                 )
                                                 )
                                          )
@@ -168,9 +168,6 @@ server <- function(input, output){
     logjs(paste("Length of text:", nchar(input$text)))
   })
 }
-# 
-# observeEvent(ip$menu_tabs, {if (input$tabs == "About") {
-#   NULL
-# }})
+
 
 shinyApp(ui = ui, server = server)
