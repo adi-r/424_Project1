@@ -27,18 +27,18 @@ cta_station$week_day <- wday(cta_station$date, label=TRUE)
 
 # Add Month name
 name_of_month <- function(df){
-  df$month_name[df$month==1] <- 'January'
-  df$month_name[df$month==2] <- 'February'
-  df$month_name[df$month==3] <- 'March'
-  df$month_name[df$month==4] <- 'April'
+  df$month_name[df$month==1] <- 'Jan'
+  df$month_name[df$month==2] <- 'Feb'
+  df$month_name[df$month==3] <- 'Mar'
+  df$month_name[df$month==4] <- 'Apr'
   df$month_name[df$month==5] <- 'May'
-  df$month_name[df$month==6] <- 'June'
-  df$month_name[df$month==7] <- 'July'
-  df$month_name[df$month==8] <- 'August'
-  df$month_name[df$month==9] <- 'September'
-  df$month_name[df$month==10] <- 'October'
-  df$month_name[df$month==11] <- 'November'
-  df$month_name[df$month==12] <- 'December'
+  df$month_name[df$month==6] <- 'Jun'
+  df$month_name[df$month==7] <- 'Jul'
+  df$month_name[df$month==8] <- 'Aug'
+  df$month_name[df$month==9] <- 'Sep'
+  df$month_name[df$month==10] <- 'Oct'
+  df$month_name[df$month==11] <- 'Nov'
+  df$month_name[df$month==12] <- 'Dec'
   
   return(df)
   

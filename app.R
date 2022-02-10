@@ -18,9 +18,10 @@ df <- df[, -1]
 df$date <- as.Date(df$date, "%Y-%m-%d")
 str(df)
 
-uic_station <- subset(df, df$stationname == "UIC-Halsted")
-racine_station <- subset(df, df$stationname == "Racine")
-ohare_station <- subset(df, df$stationname == "O'Hare Airport")
+
+uic_df <- subset(df, df$stationname == "UIC-Halsted")
+racine_df <- subset(df, df$stationname == "Racine")
+ohare_df <- subset(df, df$stationname == "O'Hare Airport")
 
 # Create Shiny app
 ui <- dashboardPage(skin = "black",
@@ -60,18 +61,11 @@ ui <- dashboardPage(skin = "black",
                                                        choices = c("All", 2021:2001), selected = c(2021)
                                                        )
                                            )
-                                       ),
-                                column(8,
-                                       div(checkboxGroupInput("chrono_data", "Period",
-                                                              choices = c("Weekly", "Monthly", "Yearly"),
-                                                              selected = c("Weekly", "Monthly", "Yearly")
-                                                              )
-                                           )
                                        )
-                              ),
+                                ),
                               width = 2
                             ),
-                            mainPanel(uiOutput("data_table"), width = 12)
+                            mainPanel(uiOutput("data_table"), width = 10)
                             )
               ),
       tabItem(tabName = "station_compare", 
@@ -162,11 +156,337 @@ ui <- dashboardPage(skin = "black",
 )
 
 server <- function(input, output){
-  showLog()
-  logjs("App started")
-  observe({
-    logjs(paste("Length of text:", nchar(input$text)))
+  # Bar COlor
+  bar_color <- function(station){
+    # color <- "black"
+    
+    if (station == "All"){
+      color <- "#dd1c77"
+    } else if (station == "UIC-Halsted"){
+      color <- "#756bb1"
+    } else if (station == "O'Hare Airport") {
+      color <- "#de2d26"
+    } else {
+      color <- "#2c7fb8"
+    }
+  }
+  
+  # Sum Functions
+  year_sum <- function(year){
+    if(input$select_station_data == "All"){
+      sum(df[df$year == year,]$rides)
+    }
+    else{
+      if(input$select_station_data == "UIC-Halsted"){
+        sum(uic_df[uic_df$year == year,]$rides)
+      } else if(input$select_station_data == "O'Hare Airport"){
+        sum(ohare_df[ohare_df$year == year,]$rides)
+      } else{
+        sum(racine_df[racine_df$year == year,]$rides)
+      }
+    }
+  }
+  
+  month_sum <- function(month){
+    if(input$select_year_data == "All"){
+      if(input$select_station_data == "All"){
+        sum(df[df$month_name == month,]$rides)
+      } else if(input$select_station_data == "UIC-Halsted"){
+        sum(uic_df[uic_df$month_name == month,]$rides)
+      } else if(input$select_station_data == "O'Hare Airport"){
+        sum(ohare_df[ohare_df$month_name == month,]$ rides)
+      } else{
+        sum(racine_df[racine_df$month == month,]$rides)
+      }
+    }
+    else{
+      if(input$select_station_data == "All"){
+        sum(df[df$year == input$select_year_data & df$month_name == month,]$rides)
+      } else if(input$select_station_data == "UIC-Halsted"){
+        sum(uic_df[uic_df$year == input$select_year_data & uic_df$month_name == month,]$rides)
+      } else if(input$select_station_data == "O'Hare Airport"){
+        sum(ohare_df[ohare_df$year == input$select_year_data & ohare_df$month_name == month,]$ rides)
+      } else{
+        sum(racine_df[racine_df$year == input$select_year_data & racine_df$month_name == month,]$rides)
+      }
+    }
+  }
+  
+  daily_sum <- function(day){
+    if(input$select_year_data == "All"){
+      if(input$select_station_data == "All"){
+        sum(df[df$week_day == day,]$rides)
+      } else if(input$select_station_data == "UIC-Halsted"){
+        sum(uic_df[uic_df$week_day == day,]$rides)
+      } else if(input$select_station_data == "O'Hare Airport"){
+        sum(ohare_df[ohare_df$week_day == day,]$ rides)
+      } else{
+        sum(racine_df[racine_df$week_day == day,]$rides)
+      }
+    }
+    else{
+      if(input$select_station_data == "All"){
+        sum(df[df$year == input$select_year_data & df$week_day == day,]$rides)
+      } else if(input$select_station_data == "UIC-Halsted"){
+        sum(uic_df[uic_df$year == input$select_year_data & uic_df$week_day == day,]$rides)
+      } else if(input$select_station_data == "O'Hare Airport"){
+        sum(ohare_df[ohare_df$year == input$select_year_data & ohare_df$week_day == day,]$ rides)
+      } else{
+        sum(racine_df[racine_df$year == input$select_year_data & racine_df$week_day == day,]$rides)
+      }
+    }
+  }
+  
+  # Create dataframes from specific years
+  # year_frame <- reactive({
+  #   if(input$select_station_data == "All"){
+  #     if(input$select_year_data == "All"){
+  #       df
+  #     } else{
+  #       subset(df, df$year == input$select_year_data)
+  #     }
+  #   }
+  #   else{
+  #     if(input$select_year_data == "All"){
+  #       if(input$select_station_data == "UIC-Halsted"){
+  #         uic_df
+  #       } else if(input$select_station_data == "O'Hare Airport"){
+  #         ohare_df
+  #       } else{
+  #         racine_df
+  #       }
+  #     } else{
+  #       if(input$select_station_data == "UIC-Halsted"){
+  #         subset(uic_df, uic_df$year == input$select_year_data)
+  #       } else if(input$select_station_data == "O'Hare Airport"){
+  #         subset(ohare_df, ohare_df$year == input$select_year_data)
+  #       } else{
+  #         subset(racine_df, racine_df$year == input$select_year_data)
+  #       }
+  #     }
+  #   }
+  # })
+  
+  year_frame <- function(station, object="graph"){
+    if(object != "table"){
+      if(station == "All"){df}
+      else if(station == "UIC-Halsted"){uic_df}
+      else if(station == "Racine"){racine_df}
+      else{ohare_df}
+    } 
+    else{
+      if(station == "All"){
+            if(station == "All"){
+              df
+            } else{
+              subset(df, df$year == input$select_year_data)
+            }
+          }
+          else{
+            if(input$select_year_data == "All"){
+              if(station == "UIC-Halsted"){
+                uic_df
+              } else if(station == "O'Hare Airport"){
+                ohare_df
+              } else{
+                racine_df
+              }
+            } else{
+              if(station == "UIC-Halsted"){
+                subset(uic_df, uic_df$year == input$select_year_data)
+              } else if(station == "O'Hare Airport"){
+                subset(ohare_df, ohare_df$year == input$select_year_data)
+              } else{
+                subset(racine_df, racine_df$year == input$select_year_data)
+              }
+            }
+          }
+    }
+    
+  }
+  
+  # Create sum dataframes
+  
+  month_df <- reactive({
+    month <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+    rides <- array(unlist(
+      lapply(c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"), month_sum)
+    ))
+    retrieve_package <- data.frame(month, rides)
+    return(retrieve_package)
   })
+  
+  daily_df <- reactive({
+    days <- c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
+    rides <- array(unlist(
+      lapply(c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"), daily_sum)
+    ))
+    retrieve_package <- data.frame(days, rides)
+    return(retrieve_package)
+  })
+  
+  year_df <- reactive({
+    year <- 2001:2021
+    rides <- array(unlist(lapply(2001:2021, year_sum)))
+    data.frame(year, rides)
+  })
+  
+  # Render graph to show data
+  output$rides_year <- renderPlot({
+    ggplot(data = year_frame(input$select_station_data), aes(x = year, y = rides)) +
+      geom_bar(stat = "identity", aes(fill = rides), fill = bar_color(input$select_station_data)) +
+      labs(x = "Year", y ="Rides", title = "Station Rides Across the Years")
+  })
+  
+  output$rides_month <- renderPlot({
+    ggplot(data = month_df(), aes(x = factor(month, level = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")), y = rides)) +
+      geom_bar(stat = "identity", aes(fill = rides), fill = bar_color(input$select_station_data)) +
+      labs(x = "Month", y ="Rides", title = "Monthly entries")
+  })
+  
+  output$rides_week <- renderPlot({
+    ggplot(data = daily_df(), aes(x = factor(days, c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")), y = rides)) +
+      geom_bar(stat = "identity", aes(fill = rides), fill = bar_color(input$select_station_data)) +
+      labs(x = "Week Day", y ="Rides", title = "Weekly entries")
+  })
+  
+  # Create dataframe to show data
+  year_table <- reactive({
+    retrieve_package <- year_frame(input$select_station_data, "table")
+    cols <- c("stationname", "date", "rides")
+    retrieve_package <- retrieve_package[cols]
+    
+    names(retrieve_package)[1] <- "Station"
+    names(retrieve_package)[2] <- "Date"
+    names(retrieve_package)[3] <- "Rides"
+    
+    return(retrieve_package)
+  })
+  
+  month_table <- reactive({
+    retrieve_package <- month_df()
+    # cols <- c("month", "rides")
+    # retrieve_package <- retrieve_package[cols]
+    
+    names(retrieve_package)[1] <- "Month"
+    names(retrieve_package)[2] <- "Rides"
+    return(retrieve_package)
+  })
+  
+  daily_table <- reactive({
+    retrieve_package <- daily_df()
+    # cols <- c("days", "rides")
+    # retrieve_package <- retrieve_package[cols]
+    names(retrieve_package)[1] <- "Day"
+    names(retrieve_package)[2] <- "Rides"
+    return(retrieve_package)
+  })
+  
+  
+  # Create table to show tabular data
+  output$year_table <- renderUI({
+    # format the table layout
+    div(
+      tags$head(
+        tags$style(
+          HTML('
+          .datatables {
+            height: unset !important;
+            width: inherit !important;
+          }
+           ')
+        )
+      ),
+      
+      datatable(
+        year_table(),
+        options = list(
+          pageLength = 8,
+          scrollX = TRUE,
+          dom = 'tp',
+          columnDefs = list(list(className = 'dt-center', targets = "_all"))
+        ),
+        rownames = FALSE
+      )
+    )
+  })
+  
+  output$month_table <- renderUI({
+    # format the table layout
+    div(
+      tags$head(
+        tags$style(
+          HTML('
+          .datatables {
+            height: unset !important;
+            width: inherit !important;
+          }
+           ')
+        )
+      ),
+      
+      datatable(
+        month_table(),
+        options = list(
+          pageLength = 8,
+          scrollX = TRUE,
+          dom = 'tp',
+          columnDefs = list(list(className = 'dt-center', targets = "_all"))
+        ),
+        rownames = FALSE
+      )
+    )
+  })
+  
+  output$daily_table <- renderUI({
+    # format the table layout
+    div(
+      tags$head(
+        tags$style(
+          HTML('
+          .datatables {
+            height: unset !important;
+            width: inherit !important;
+          }
+           ')
+        )
+      ),
+      
+      datatable(
+        daily_table(),
+        options = list(
+          pageLength = 8,
+          scrollX = TRUE,
+          dom = 'tp',
+          columnDefs = list(list(className = 'dt-center', targets = "_all"))
+        ),
+        rownames = FALSE
+      )
+    )
+  })
+  
+  # render plot and table
+  output$data_table <- renderUI({
+    
+    # put three plots in a row
+    fluidRow(
+        column(4, 
+               div(plotOutput("rides_year")),
+               uiOutput("year_table")
+        ),
+        column(4, 
+               div(plotOutput("rides_month")),
+               uiOutput("month_table")
+        ),
+        column(4, 
+               div(plotOutput("rides_week")),
+               uiOutput("daily_table")
+        )
+      
+    )
+  })
+  
+  
 }
 
 
