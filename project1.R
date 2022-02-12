@@ -5,7 +5,7 @@ getwd()
 # Libraries
 library(lubridate)
 library(dplyr)
-
+library(ggplot2)
 # Read Table
 cta_station <- read.table(file = 'cta_station_entries.tsv', sep = '\t', header = TRUE, quote="\"")
 
@@ -86,3 +86,11 @@ str(trial)
 # res <- split(station_data, f)
 # map2(res, paste0("chunk_", names(res), ".tsv"), write.csv)
 ################################################################################
+
+ggplot(data = uic_station[uic_station$year==2021,], aes(x = date, y = rides)) +
+  geom_bar(stat = "identity", aes(fill = rides), fill = "red" )+
+  labs(x = "Date", y ="Rides", title = "Station Rides Across the Years")
+trial
+new_data <- trial[trial$year == 2021,]
+new_data <- new_data[c("date", "rides")]
+new_data

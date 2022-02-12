@@ -3,8 +3,8 @@ library(lubridate)
 library(DT)
 library(ggplot2)
 library(dplyr)
-library(tidyverse)
 library(tidyr)
+library(scales)
 library(shiny)
 library(shinydashboard)
 library(shinyWidgets)
@@ -27,7 +27,7 @@ ui <- dashboardPage(skin = "black",
   dashboardSidebar(collapsed = FALSE, disable = FALSE,
                    sidebarMenu(
                      id = "menu_tabs",
-                     tags$div(style = "margin-top: 400px;"),
+                     tags$div(style = "margin-top: 500px;"),
                      menuItem("Station Comparison", tabName = "station_compare", selected = TRUE, icon = icon("signal", lib = "glyphicon")),
                      menuItem("Table Data", tabName = "table_data",icon = icon("dashboard")),
                      menuItem("Dates of Interest", tabName = "doi", icon = icon("calendar")),
@@ -39,7 +39,7 @@ ui <- dashboardPage(skin = "black",
     tabItems(
       tabItem(tabName = "station_compare", 
               sidebarLayout(position = "left",
-                            sidebarPanel(style = "margin-top: 50%",
+                            sidebarPanel(style = "margin-top: 80%",
                                          h4("Left"),
                                          div(selectInput("station1_compare", "Station",
                                                          choices = c("All", "UIC-Halsted", "O'Hare Airport", "Racine"),
@@ -76,7 +76,7 @@ ui <- dashboardPage(skin = "black",
       ),
       tabItem(tabName = "table_data",
               sidebarLayout(position = "left",
-                            sidebarPanel(style = "margin-top: 50%",
+                            sidebarPanel(style = "margin-top: 80%",
                                          h4("Left"),
                                          div(selectInput("station1_table_data", "Station",
                                                          choices = c("All", "UIC-Halsted", "O'Hare Airport", "Racine"),
@@ -123,29 +123,67 @@ ui <- dashboardPage(skin = "black",
                                          ),
                                          width = 2
                             ),
-                            mainPanel(
+                            mainPanel(tags$div(style = "margin-top: 300px;"),
                               fluidRow(
                                 splitLayout(cellWidths = c("75%", "75%"), uiOutput("table_plots1"), uiOutput("table_plots2"))), width = 8)
                             )
               ),
       tabItem(tabName = "doi",
               fluidRow(
-                tags$div(style = "margin-top: 100px;"),
+                tags$div(style = "margin-top: 300px;"),
                 tabBox(
-                  title = "select_station_tab",
-                  id = "tabset1", height = "250px", selected = "Monthly",
-                  tabPanel("Through the Years", plotOutput("plot1")),
-                  tabPanel("Monthly", h1("MKCCCCCCCCCCCC"), plotOutput("plot2")),
-                  tabPanel("Weekly", plotOutput("plot3"))
+                  title = "",
+                  id = "tabset1", height = NULL, selected = "Date: 01", width=12,
+                  tabPanel("Date: 01", h1("O'Hare Airport 2019"),h3("Heavy Rainfall and Storm Warning might have led to the extreme decline in number of riders from Sept 28th to Oct 5th 2019."),  
+                           fluidPage(
+                             fluidRow(column(12, plotOutput("date_plot1"))),
+                             fluidRow(column(12, uiOutput("assoc_table1")))
+                             )),
+                  tabPanel("Date: 02", h1("9/11 OHare"), h3("Due to the attacks on September 11th, there was a sharp decline in number of riders from Sept."), plotOutput("date_plot2")),
+                  tabPanel("Date: 03", h1("UIC COVID"), h3("Due to the pandemic and CDC guidelines, rider numbers were at a low time from April 2020 all the way till July 2021"), fluidPage(
+                    fluidRow(column(12, plotOutput("date_plot3"))),
+                    fluidRow(column(12, plotOutput("date_plot4")))
+                  )),
+                  tabPanel("Date: 04", h1("O'Hare COVID"), h3("Due to CDC regulations and travel restrictions we can observe a significant decrease in ridership from April 2020 to July 2021"), fluidPage(
+                    fluidRow(column(12, plotOutput("date_plot5"))),
+                    fluidRow(column(12, plotOutput("date_plot13")))
+                  )),
+                  tabPanel("Date: 05", h1("Heavy Rainfall on July 12th 2008 OHare"), h3("As per news reports, there was extremely heavy rainfall and storms occurring which leads to the large gap present in the graph."), fluidPage(
+                    fluidRow(column(12, plotOutput("date_plot6"))),
+                    fluidRow(column(12, uiOutput("assoc_table3")))
+                  )),
+                  tabPanel("Date: 06", h1("Train Derail March 24th"), h3("On this date, a train derailed injuring 34 people. The train was removed on the 27th and the station reopened for activity on the 30th"), fluidPage(
+                    fluidRow(column(12, plotOutput("date_plot7"))),
+                    fluidRow(column(12, uiOutput("assoc_table4")))
+                  )),
+                  tabPanel("Date: 07", h1("Oct 6th 2017 Chicago Cubs win against Washington Nationals"), h3("There's a huge spike in rider activity at O'Hare Airport which could possibly be attributed to the turnout at the game and the win that proceeded it"), fluidPage(
+                    fluidRow(column(12, plotOutput("date_plot8"))),
+                    fluidRow(column(12, uiOutput("assoc_table5")))
+                  )),
+                  tabPanel("Date: 08", h1("Obama Oct/Nov 2008 Speech"), h3("There's unusually high activity in the month of Oct/Nov when the general ridership typically starts declining. This spike in rider increase could be attributed to Obamas presence in Chicago since it was during this time he addressed the people at Grant Park on Nov 8th 2008 "), fluidPage(
+                    fluidRow(column(12, plotOutput("date_plot9"))),
+                    fluidRow(column(12, uiOutput("assoc_table6")))
+                  )),
+                  tabPanel("Date: 09", h1("Pattern in UIC-Halsted Summer Decline"), h3("There's a decline of passengers during the summer months in UIC-Halsted station which could be attributed to the lack of students not attending classes during the summer."), fluidPage(
+                    fluidRow(column(12, plotOutput("date_plot10"))),
+                    fluidRow(column(12, plotOutput("date_plot11")))
+                  )),
+                  tabPanel("Date: 10", h1("Nov 2nd 2016 Cubs win World Series"), h3("The high spikes in the number of riders can be attributed to the popularity of the match considering it's the first time the Cubs have reached the finals since 1908."), fluidPage(
+                    fluidRow(column(12, plotOutput("date_plot12"))),
+                    fluidRow(column(12, uiOutput("assoc_table7")))
+                  ))
                 )
               )),
       
       tabItem(tabName = "about",
               h1('About'),
-              h4('Created by Aditya Ranganathan on 02/07/2022'),
-              h4("The dashboard display data reagrding CTA rides in a clear and intuitive manner.
+              h3('Created by Aditya Ranganathan on 02/07/2022'),
+              h3("The dashboard display data reagrding CTA rides in a clear and intuitive manner.
                  Users can check ride data of 3 different CTA stations: O'Hare Airport, UIC-Halsted and Racine.
-                 The data can be viewed from a yearly, monthly, weekly or daily basis. Users can see the data either as plots or as a tabular form")
+                 The data can be viewed from a yearly, monthly, weekly or daily basis. Users can see the data either as plots or as a tabular form"),
+              h3("Users can get an idea about the number of passengers that travel through the 'L' and can also correlate certain major events that occurred in Chicago with respect to the number of riders during that time period."),
+              h3("Data was sourced from from the Chicago Data Portal at:
+https://data.cityofchicago.org/Transportation/CTA-Ridership-L-Station-Entries-Daily-Totals/5neh-572f")
               )
       )
     )
@@ -261,7 +299,7 @@ server <- function(input, output){
     
   }
   
-  # Create sum dataframes
+  # Create summarized dataframes
   date_df <- function(year, station){
     if(year == "All"){
       if(station == "All"){
@@ -326,38 +364,38 @@ server <- function(input, output){
   output$rides_dates_table1 <- renderPlot({
     ggplot(data = date_df(input$year1_table_data, input$station1_table_data), aes(x = date, y = rides)) +
       geom_bar(stat = "identity", aes(fill = rides), fill = bar_color(input$station1_table_data))+
-      labs(x = "Date", y ="Rides", title = "Daily Entries")
+      labs(x = "Date", y ="Rides", title = "Daily Entries") + scale_y_continuous(labels = comma)
   })
   
   output$rides_week_table1 <- renderPlot({
     ggplot(data = week_df(input$year1_table_data, input$station1_table_data), aes(x = factor(days, c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")), y = rides)) +
       geom_bar(stat = "identity", aes(fill = rides), fill = bar_color(input$station1_table_data)) +
-      labs(x = "Week Day", y ="Rides", title = "Weekly entries")
+      labs(x = "Week Day", y ="Rides", title = "Weekly entries") + scale_y_continuous(labels = comma)
   })
   
   output$rides_month_table1 <- renderPlot({
     ggplot(data = month_df(input$year1_table_data, input$station1_table_data), aes(x = factor(month, level = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")), y = rides)) +
       geom_bar(stat = "identity", aes(fill = rides), fill = bar_color(input$station1_table_data)) +
-      labs(x = "Month", y ="Rides", title = "Monthly entries")
+      labs(x = "Month", y ="Rides", title = "Monthly entries") + scale_y_continuous(labels = comma)
   })
   
   # Render graph for Table Station 2
   output$rides_dates_table2 <- renderPlot({
     ggplot(data = date_df(input$year2_table_data, input$station2_table_data), aes(x = date, y = rides)) +
       geom_bar(stat = "identity", aes(fill = rides), fill = bar_color(input$station2_table_data))+
-      labs(x = "Date", y ="Rides", title = "Daily Entries")
+      labs(x = "Date", y ="Rides", title = "Daily Entries") + scale_y_continuous(labels = comma)
   })
   
   output$rides_week_table2 <- renderPlot({
     ggplot(data = week_df(input$year2_table_data, input$station2_table_data), aes(x = factor(days, c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")), y = rides)) +
       geom_bar(stat = "identity", aes(fill = rides), fill = bar_color(input$station2_table_data)) +
-      labs(x = "Week Day", y ="Rides", title = "Weekly entries")
+      labs(x = "Week Day", y ="Rides", title = "Weekly entries") + scale_y_continuous(labels = comma)
   })
   
   output$rides_month_table2 <- renderPlot({
     ggplot(data = month_df(input$year2_table_data, input$station2_table_data), aes(x = factor(month, level = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")), y = rides)) +
       geom_bar(stat = "identity", aes(fill = rides), fill = bar_color(input$station2_compare)) +
-      labs(x = "Month", y ="Rides", title = "Monthly entries")
+      labs(x = "Month", y ="Rides", title = "Monthly entries") + scale_y_continuous(labels = comma)
   })
   
 #####################################################################################################################################################  
@@ -365,50 +403,50 @@ server <- function(input, output){
   output$rides_dates_compare1 <- renderPlot({
     ggplot(data = date_df(input$year1_compare, input$station1_compare), aes(x = date, y = rides)) +
       geom_bar(stat = "identity", aes(fill = rides), fill = bar_color(input$station1_compare))+
-      labs(x = "Date", y ="Rides", title = "Daily Entries")
+      labs(x = "Date", y ="Rides", title = "Daily Entries") + scale_y_continuous(labels = comma)
   })
   
   output$rides_year_compare1 <- renderPlot({
     ggplot(data = year_frame(input$year1_compare, input$station1_compare, "graph"), aes(x = year, y = rides)) +
       geom_bar(stat = "identity", aes(fill = rides), fill = bar_color(input$station1_compare)) +
-      labs(x = "Year", y ="Rides", title = "Station Rides Across the Years")
+      labs(x = "Year", y ="Rides", title = "Station Rides Across the Years") + scale_y_continuous(labels = comma)
   })
   
   output$rides_month_compare1 <- renderPlot({
     ggplot(data = month_df(input$year1_compare, input$station1_compare), aes(x = factor(month, level = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")), y = rides)) +
       geom_bar(stat = "identity", aes(fill = rides), fill = bar_color(input$station1_compare)) +
-      labs(x = "Month", y ="Rides", title = "Monthly entries")
+      labs(x = "Month", y ="Rides", title = "Monthly entries") + scale_y_continuous(labels = comma)
   })
   
   output$rides_week_compare1 <- renderPlot({
     ggplot(data = week_df(input$year1_compare, input$station1_compare), aes(x = factor(days, c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")), y = rides)) +
       geom_bar(stat = "identity", aes(fill = rides), fill = bar_color(input$station1_compare)) +
-      labs(x = "Week Day", y ="Rides", title = "Weekly entries")
+      labs(x = "Week Day", y ="Rides", title = "Weekly entries") + scale_y_continuous(labels = comma)
   })
   
   # Render graph to show data for Compare Station 2
   output$rides_dates_compare2 <- renderPlot({
     ggplot(data = date_df(input$year2_compare, input$station2_compare), aes(x = date, y = rides)) +
       geom_bar(stat = "identity", aes(fill = rides), fill = bar_color(input$station2_compare))+
-      labs(x = "Date", y ="Rides", title = "Daily Entries")
+      labs(x = "Date", y ="Rides", title = "Daily Entries") + scale_y_continuous(labels = comma)
   })
   
   output$rides_year_compare2 <- renderPlot({
     ggplot(data = year_frame(input$year2_compare, input$station2_compare, "graph"), aes(x = year, y = rides)) +
       geom_bar(stat = "identity", aes(fill = rides), fill = bar_color(input$station2_compare)) +
-      labs(x = "Year", y ="Rides", title = "Station Rides Across the Years")
+      labs(x = "Year", y ="Rides", title = "Station Rides Across the Years") + scale_y_continuous(labels = comma)
   })
   
   output$rides_month_compare2 <- renderPlot({
     ggplot(data = month_df(input$year2_compare, input$station2_compare), aes(x = factor(month, level = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")), y = rides)) +
       geom_bar(stat = "identity", aes(fill = rides), fill = bar_color(input$station2_compare)) +
-      labs(x = "Month", y ="Rides", title = "Monthly entries")
+      labs(x = "Month", y ="Rides", title = "Monthly entries") + scale_y_continuous(labels = comma)
   })
   
   output$rides_week_compare2 <- renderPlot({
     ggplot(data = week_df(input$year2_compare, input$station2_compare), aes(x = factor(days, c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")), y = rides)) +
       geom_bar(stat = "identity", aes(fill = rides), fill = bar_color(input$station2_compare)) +
-      labs(x = "Week Day", y ="Rides", title = "Weekly entries")
+      labs(x = "Week Day", y ="Rides", title = "Weekly entries") + scale_y_continuous(labels = comma)
   })
 
   #########################################################################################################################################################
@@ -457,7 +495,66 @@ server <- function(input, output){
       rename(Week_Day = days, Rides = rides)
     return(table_frame)
   }
-
+####################################################################################################################################################
+  # DOI Tables
+  
+  doi_table1 <- function(){
+    table_frame <- year_frame(2019, "O'Hare Airport", "table")
+    table_frame <- table_frame[c("date", "rides")]
+    table_frame <- table_frame %>%
+      rename(Date = date, Rides = rides)
+    return(table_frame)
+  }
+  
+  doi_table2 <- function(){
+    table_frame <- year_frame(2014, "O'Hare Airport", "table")
+    table_frame <- table_frame[c("date", "rides")]
+    table_frame <- table_frame %>%
+      rename(Date = date, Rides = rides)
+    return(table_frame)
+  }
+  doi_table3 <- function(){
+    table_frame <- year_frame(2008, "O'Hare Airport", "table")
+    table_frame <- table_frame[c("date", "rides")]
+    table_frame <- table_frame %>%
+      rename(Date = date, Rides = rides)
+    return(table_frame)
+  }
+  doi_table4 <- function(){
+    table_frame <- year_frame(2014, "O'Hare Airport", "table")
+    table_frame <- table_frame[c("date", "rides")]
+    table_frame <- table_frame %>%
+      rename(Date = date, Rides = rides)
+    return(table_frame)
+  }
+  doi_table5 <- function(){
+    table_frame <- year_frame(2016, "O'Hare Airport", "table")
+    table_frame <- table_frame[c("date", "rides")]
+    table_frame <- table_frame %>%
+      rename(Date = date, Rides = rides)
+    return(table_frame)
+  }
+  doi_table5 <- function(){
+    table_frame <- year_frame(2016, "O'Hare Airport", "table")
+    table_frame <- table_frame[c("date", "rides")]
+    table_frame <- table_frame %>%
+      rename(Date = date, Rides = rides)
+    return(table_frame)
+  }
+  doi_table6 <- function(){
+    table_frame <- year_frame(2008, "O'Hare Airport", "table")
+    table_frame <- table_frame[c("date", "rides")]
+    table_frame <- table_frame %>%
+      rename(Date = date, Rides = rides)
+    return(table_frame)
+  }
+  doi_table7 <- function(){
+    table_frame <- year_frame(2016, "O'Hare Airport", "table")
+    table_frame <- table_frame[c("date", "rides")]
+    table_frame <- table_frame %>%
+      rename(Date = date, Rides = rides)
+    return(table_frame)
+  }
 ####################################################################################################################################################  
   # Bar Graph color
   bar_color <- function(station){
@@ -608,6 +705,151 @@ server <- function(input, output){
         rownames = FALSE
       ))
   })
+  
+  output$doi_table1 <- renderUI({
+    div(
+      tags$style(
+        HTML('.datatables {width: inherit !important;}')
+      ),
+      datatable(
+        doi_table1(),
+        options = list(
+          initComplete = JS(
+            "function(settings, json) {",
+            "$(this.api().table().header()).css({'background-color': '#000', 'color': '#fff'});",
+            "}"),
+          pageLength = 7,
+          scrollX = TRUE,
+          dom = 'tp',
+          columnDefs = list(list(className = 'dt-center', targets = "_all"))
+        ),
+        rownames = FALSE
+      ))
+  })
+  
+  output$doi_table2 <- renderUI({
+    div(
+      tags$style(
+        HTML('.datatables {width: inherit !important;}')
+      ),
+      datatable(
+        doi_table2(),
+        options = list(
+          initComplete = JS(
+            "function(settings, json) {",
+            "$(this.api().table().header()).css({'background-color': '#000', 'color': '#fff'});",
+            "}"),
+          pageLength = 7,
+          scrollX = TRUE,
+          dom = 'tp',
+          columnDefs = list(list(className = 'dt-center', targets = "_all"))
+        ),
+        rownames = FALSE
+      ))
+  })
+  
+  output$doi_table3 <- renderUI({
+    div(
+      tags$style(
+        HTML('.datatables {width: inherit !important;}')
+      ),
+      datatable(
+        doi_table3(),
+        options = list(
+          initComplete = JS(
+            "function(settings, json) {",
+            "$(this.api().table().header()).css({'background-color': '#000', 'color': '#fff'});",
+            "}"),
+          pageLength = 7,
+          scrollX = TRUE,
+          dom = 'tp',
+          columnDefs = list(list(className = 'dt-center', targets = "_all"))
+        ),
+        rownames = FALSE
+      ))
+  })
+  
+  output$doi_table4 <- renderUI({
+    div(
+      tags$style(
+        HTML('.datatables {width: inherit !important;}')
+      ),
+      datatable(
+        doi_table4(),
+        options = list(
+          initComplete = JS(
+            "function(settings, json) {",
+            "$(this.api().table().header()).css({'background-color': '#000', 'color': '#fff'});",
+            "}"),
+          pageLength = 7,
+          scrollX = TRUE,
+          dom = 'tp',
+          columnDefs = list(list(className = 'dt-center', targets = "_all"))
+        ),
+        rownames = FALSE
+      ))
+  })
+  output$doi_table5 <- renderUI({
+    div(
+      tags$style(
+        HTML('.datatables {width: inherit !important;}')
+      ),
+      datatable(
+        doi_table5(),
+        options = list(
+          initComplete = JS(
+            "function(settings, json) {",
+            "$(this.api().table().header()).css({'background-color': '#000', 'color': '#fff'});",
+            "}"),
+          pageLength = 7,
+          scrollX = TRUE,
+          dom = 'tp',
+          columnDefs = list(list(className = 'dt-center', targets = "_all"))
+        ),
+        rownames = FALSE
+      ))
+  })
+  output$doi_table6 <- renderUI({
+    div(
+      tags$style(
+        HTML('.datatables {width: inherit !important;}')
+      ),
+      datatable(
+        doi_table6(),
+        options = list(
+          initComplete = JS(
+            "function(settings, json) {",
+            "$(this.api().table().header()).css({'background-color': '#000', 'color': '#fff'});",
+            "}"),
+          pageLength = 7,
+          scrollX = TRUE,
+          dom = 'tp',
+          columnDefs = list(list(className = 'dt-center', targets = "_all"))
+        ),
+        rownames = FALSE
+      ))
+  })
+  output$doi_table7 <- renderUI({
+    div(
+      tags$style(
+        HTML('.datatables {width: inherit !important;}')
+      ),
+      datatable(
+        doi_table7(),
+        options = list(
+          initComplete = JS(
+            "function(settings, json) {",
+            "$(this.api().table().header()).css({'background-color': '#000', 'color': '#fff'});",
+            "}"),
+          pageLength = 7,
+          scrollX = TRUE,
+          dom = 'tp',
+          columnDefs = list(list(className = 'dt-center', targets = "_all"))
+        ),
+        rownames = FALSE
+      ))
+  })
+  
  ############################################################################################################################################# 
   # Render UI
   # Table station 1
@@ -665,20 +907,82 @@ server <- function(input, output){
       fluidRow(column(8, div(plotOutput("rides_month_compare2")))),
       fluidRow(column(8, div(plotOutput("rides_week_compare2")))))
   })
-  
+##############################################################################################################################################################
+  # TABLES OF INTEREST
+  output$assoc_table1 <- renderUI({uiOutput("doi_table1")})
+  output$assoc_table2 <- renderUI({uiOutput("doi_table2")})
+  output$assoc_table3 <- renderUI({uiOutput("doi_table3")})
+  output$assoc_table4 <- renderUI({uiOutput("doi_table4")})
+  output$assoc_table5 <- renderUI({uiOutput("doi_table5")})
+  output$assoc_table6 <- renderUI({uiOutput("doi_table6")})
+  output$assoc_table7 <- renderUI({uiOutput("doi_table7")})
 ###############################################################################################################################################################  
   # Render Dates of Interest
-  output$plot1 <- renderPlot({
-    ggplot(data = year_frame("Racine"), aes(x = year, y = rides)) +
-      geom_bar(stat = "identity", aes(fill = rides), fill = bar_color("Racine")) +
-      labs(x = "Year", y ="Rides", title = "Station Rides Across the Years")
+  output$date_plot1 <- renderPlot({
+    ggplot(data = date_df(2019, "O'Hare Airport"), aes(x = date, y = rides)) +
+      geom_bar(stat = "identity", aes(fill = rides), fill = bar_color("O'Hare Airport")) +
+      labs(x = "Date", y ="Rides", title = "O'Hare Airport in 2019") + scale_y_continuous(labels = comma)
   })
-  output$plot2 <- renderPlot({
+  output$date_plot2 <- renderPlot({
+    ggplot(data = month_df(2001, "O'Hare Airport"), aes(x = factor(month, level = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")), y = rides)) +
+      geom_bar(stat = "identity", aes(fill = rides), fill = bar_color("O'Hare Airport")) +
+      labs(x = "Month", y ="Rides", title = "O'Hare Airport in 2001") + scale_y_continuous(labels = comma)
+  })
+  output$date_plot3 <- renderPlot({
+    ggplot(data = month_df(2020, "UIC-Halsted"), aes(x = factor(month, level = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")), y = rides)) +
+      geom_bar(stat = "identity", aes(fill = rides), fill = bar_color("UIC-Halsted")) +
+      labs(x = "Month", y ="Rides", title = "UIC Halsted in 2020") + scale_y_continuous(labels = comma)
+  })
+  output$date_plot4 <- renderPlot({
+    ggplot(data = month_df(2021, "UIC-Halsted"), aes(x = factor(month, level = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")), y = rides)) +
+      geom_bar(stat = "identity", aes(fill = rides), fill = bar_color("UIC-Halsted")) +
+      labs(x = "Month", y ="Rides", title = "UIC Halsted in 2021") + scale_y_continuous(labels = comma)
+  })
+  output$date_plot5 <- renderPlot({
+    ggplot(data = month_df(2020, "O'Hare Airport"), aes(x = factor(month, level = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")), y = rides)) +
+      geom_bar(stat = "identity", aes(fill = rides), fill = bar_color("O'Hare Airport")) +
+      labs(x = "Month", y ="Rides", title = "O'Hare Airport in 2020") + scale_y_continuous(labels = comma)
+  })
+  output$date_plot13 <- renderPlot({
     ggplot(data = month_df(2021, "O'Hare Airport"), aes(x = factor(month, level = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")), y = rides)) +
       geom_bar(stat = "identity", aes(fill = rides), fill = bar_color("O'Hare Airport")) +
-      labs(x = "Month", y ="Rides", title = "Monthly entries")
+      labs(x = "Month", y ="Rides", title = "O'Hare Airport in 2021") + scale_y_continuous(labels = comma)
   })
-  
+  output$date_plot6 <- renderPlot({
+    ggplot(data = date_df(2008, "O'Hare Airport"), aes(x = date, y = rides)) +
+      geom_bar(stat = "identity", aes(fill = rides), fill = bar_color("O'Hare Airport")) +
+      labs(x = "Date", y ="Rides", title = "O'Hare Airport in 2008") + scale_y_continuous(labels = comma)
+  })
+  output$date_plot7 <- renderPlot({
+    ggplot(data = date_df(2014, "O'Hare Airport"), aes(x = date, y = rides)) +
+      geom_bar(stat = "identity", aes(fill = rides), fill = bar_color("O'Hare Airport")) +
+      labs(x = "Date", y ="Rides", title = "O'Hare Airport in 2014") + scale_y_continuous(labels = comma)
+  })
+  output$date_plot8 <- renderPlot({
+    ggplot(data = date_df(2016, "O'Hare Airport"), aes(x = date, y = rides)) +
+      geom_bar(stat = "identity", aes(fill = rides), fill = bar_color("O'Hare Airport")) +
+      labs(x = "Date", y ="Rides", title = "O'Hare Airport in 2016") + scale_y_continuous(labels = comma)
+  })
+  output$date_plot9 <- renderPlot({
+    ggplot(data = date_df(2008, "O'Hare Airport"), aes(x = date, y = rides)) +
+      geom_bar(stat = "identity", aes(fill = rides), fill = bar_color("O'Hare Airport")) +
+      labs(x = "Date", y ="Rides", title = "O'Hare Airport in 2008") + scale_y_continuous(labels = comma)
+  })
+  output$date_plot12 <- renderPlot({
+    ggplot(data = date_df(2016, "O'Hare Airport"), aes(x = date, y = rides)) +
+      geom_bar(stat = "identity", aes(fill = rides), fill = bar_color("O'Hare Airport")) +
+      labs(x = "Date", y ="Rides", title = "O'Hare Airport in 2016") + scale_y_continuous(labels = comma)
+  })
+  output$date_plot10 <- renderPlot({
+    ggplot(data = month_df(2016, "UIC-Halsted"), aes(x = factor(month, level = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")), y = rides)) +
+      geom_bar(stat = "identity", aes(fill = rides), fill = bar_color("O'Hare Airport")) +
+      labs(x = "Month", y ="Rides", title = "O'Hare Airport in 2016") + scale_y_continuous(labels = comma)
+  })
+  output$date_plot11 <- renderPlot({
+    ggplot(data = month_df(2017, "UIC-Halsted"), aes(x = factor(month, level = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")), y = rides)) +
+      geom_bar(stat = "identity", aes(fill = rides), fill = bar_color("O'Hare Airport")) +
+      labs(x = "Month", y ="Rides", title = "O'Hare Airport in 2017") + scale_y_continuous(labels = comma)
+  })
 }
 
 shinyApp(ui = ui, server = server)
