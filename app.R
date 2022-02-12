@@ -125,12 +125,12 @@ ui <- dashboardPage(skin = "black",
                             ),
                             mainPanel(tags$div(style = "margin-top: 300px;"),
                               fluidRow(
-                                splitLayout(cellWidths = c("75%", "75%"), uiOutput("table_plots1"), uiOutput("table_plots2"))), width = 8)
+                                splitLayout(cellWidths = c("70%", "70%"), uiOutput("table_plots1"), uiOutput("table_plots2"))), width = 8)
                             )
               ),
       tabItem(tabName = "doi",
               fluidRow(
-                tags$div(style = "margin-top: 300px;"),
+                tags$div(style = "margin-top: 500px;"),
                 tabBox(
                   title = "",
                   id = "tabset1", height = NULL, selected = "Date: 01", width=12,
