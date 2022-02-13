@@ -177,13 +177,16 @@ ui <- dashboardPage(skin = "black",
       
       tabItem(tabName = "about",
               h1('About'),
-              h3('Created by Aditya Ranganathan on 02/07/2022'),
-              h3("The dashboard display data reagrding CTA rides in a clear and intuitive manner.
+              h2('Created by Aditya Ranganathan on 02/07/2022'),
+              h3(""),
+              h3(""),
+              h3("The dashboard displays data reagrding CTA rides in a clear and intuitive manner.
                  Users can check ride data of 3 different CTA stations: O'Hare Airport, UIC-Halsted and Racine.
-                 The data can be viewed from a yearly, monthly, weekly or daily basis. Users can see the data either as plots or as a tabular form"),
+                 The data can be viewed from a yearly, monthly, weekly or daily basis. Users have the option of seeing the data either as plots or in a tabular form"),
               h3("Users can get an idea about the number of passengers that travel through the 'L' and can also correlate certain major events that occurred in Chicago with respect to the number of riders during that time period."),
-              h3("Data was sourced from from the Chicago Data Portal at:
-https://data.cityofchicago.org/Transportation/CTA-Ridership-L-Station-Entries-Daily-Totals/5neh-572f")
+              h3("Data was sourced from from the Chicago Data Portal at", tags$a(href="https://data.cityofchicago.org/Transportation/CTA-Ridership-L-Station-Entries-Daily-Totals/5neh-572f/data", "this link")),
+              h3("The dataset consists of 1.1 million rows and has attributes 'stationname', 'station_id', 'date', 'rides' and 'daytype'")
+              
               )
       )
     )
