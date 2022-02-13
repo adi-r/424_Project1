@@ -7,7 +7,7 @@ Prerequisites
 -------------
 1. Requires installation of R and RStudio
 2. Installation of libraries: "shiny", "shinydashboard", "scales", "tidyr", "ggplot2", "dplyr", "lubridate", "DT". 
-   These libraries can be installed via the command install.packages("<library name>").
+   These libraries can be installed via the command install.packages("library name").
    
 Running the Application
 -----------------------
