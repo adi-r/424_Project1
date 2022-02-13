@@ -7,7 +7,6 @@ library(tidyr)
 library(scales)
 library(shiny)
 library(shinydashboard)
-library(shinyWidgets)
 
 # Read data
 df <- read.table(file = "station_data.tsv", sep = "\t", header=TRUE, quote = "\"")
@@ -99,6 +98,7 @@ ui <- dashboardPage(skin = "black",
                                                          )
                                          )
                                          ),
+                                         
                                          h4("Right"),
                                          div(selectInput("station2_table_data", "Station",
                                                          choices = c("All", "UIC-Halsted", "O'Hare Airport", "Racine"),
@@ -106,17 +106,17 @@ ui <- dashboardPage(skin = "black",
                                          )
                                          ),
                                          fluidRow(column(8,
-                                                         div(selectInput("time2_table_data", "Time Frame",
-                                                                         choices = c("Daily", "Weekly", "Monthly"),
-                                                                         selected = c("Daily")
+                                                         div(selectInput("year2_table_data", "Year",
+                                                                         choices = c("All", 2021:2001),
+                                                                         selected = c(2021)
                                                          )
                                                          )
                                          )
                                          ),
                                          fluidRow(column(8,
-                                                         div(selectInput("year2_table_data", "Year",
-                                                                         choices = c("All", 2021:2001),
-                                                                         selected = c(2021)
+                                                         div(selectInput("time2_table_data", "Time Frame",
+                                                                         choices = c("Daily", "Weekly", "Monthly"),
+                                                                         selected = c("Daily")
                                                          )
                                                          )
                                          )
